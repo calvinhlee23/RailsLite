@@ -21,7 +21,7 @@ class ControllerBase
   # Set the response status code and header
   def redirect_to(url)
     unless already_built_response?
-      @res.header["location"] = "http://www.google.com"
+      @res.header["location"] = url
       @res.status = 302
       @already_built_response = "redirect_to #{url}"
     else
@@ -45,6 +45,14 @@ class ControllerBase
   # use ERB and binding to evaluate templates
   # pass the rendered html to render_content
   def render(template_name)
+      controller_name = self.class.to_s[/(.*)[^Controller]/]
+
+      content = "<h1> ALL THE #{controller_name.upcase} </h1>"
+
+      content += File.read("../views/#{controller_name.downcase}_controller/#{template_name}.html.erb")
+      template = ERB.new(content).result(binding)
+      render_content(template, "text/html")
+
   end
 
   # method exposing a `Session` object
