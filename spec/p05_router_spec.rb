@@ -1,7 +1,7 @@
 require 'rack'
 require 'router'
 require 'controller_base'
-
+require 'byebug'
 describe Route do
   let(:req) { Rack::Request.new({'rack-input' => {}}) }
   let(:res) { Rack::MockResponse.new('200', {}, []) }
@@ -12,9 +12,10 @@ describe Route do
 
   describe "#matches?" do
     it "matches simple regular expression" do
-      index_route = Route.new(Regexp.new("^/users$"), :get, "x", :x)
+      index_route = Route.new(Regexp.new("^/users"), :get, "x", :x)
       allow(req).to receive(:path) { "/users" }
       allow(req).to receive(:request_method) { 'GET' }
+      # debugger
       expect(index_route.matches?(req)).to be_truthy
     end
 
@@ -83,6 +84,7 @@ describe Router do
       subject.add_route(Regexp.new("^/users$"), :get, :x, :x)
       allow(req).to receive(:path) { "/incorrect_path" }
       allow(req).to receive(:request_method) { 'GET' }
+      # debugger
       matched = subject.match(req)
       expect(matched).to be_nil
     end
