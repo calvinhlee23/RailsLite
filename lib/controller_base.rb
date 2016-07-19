@@ -24,6 +24,7 @@ class ControllerBase
       @res.header["location"] = url
       @res.status = 302
       @already_built_response = "redirect_to #{url}"
+      self.session.store_session(@res)
     else
       raise "you cannot redirect more than once"
     end
@@ -40,6 +41,7 @@ class ControllerBase
     end
     @res['Content-Type'] = content_type
     @res.body = [content]
+    self.session.store_session(@res)
   end
 
   # use ERB and binding to evaluate templates
@@ -52,11 +54,11 @@ class ControllerBase
       content += File.read("../views/#{controller_name.downcase}_controller/#{template_name}.html.erb")
       template = ERB.new(content).result(binding)
       render_content(template, "text/html")
-
   end
 
   # method exposing a `Session` object
   def session
+    @session ||= Session.new(self.req)
   end
 
   # use this with the router to call action_name (:index, :show, :create...)

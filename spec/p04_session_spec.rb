@@ -1,7 +1,7 @@
 require 'rack'
 require 'session'
 require 'controller_base'
-
+require 'byebug'
 describe Session do
   let(:req) { Rack::Request.new({'rack.input' => {}}) }
   let(:res) { Rack::Response.new([], '200', {}) }
